@@ -6,15 +6,29 @@ cursor = cnx.cursor()
 
 print(cursor)
 # url = 'www.google.com'
-
+def found():
+	global cursor
+	count = 0
+	for (name) in  cursor:
+		count += 1
+		break
+	if count > 0:
+		return True
+	return False
 def query(rollno="123456", name="Default", father="Default Father", dob="DOB", total="0", rank="999999"):
 	global cursor
 	global cnx
-	entry = ("INSERT INTO pmt "
-               "(rollno, name, father, dob, total_percentile, rank)"
-               "VALUES (%s, %s, %s, %s, %s, %s)");
-	data = (rollno, name, father, dob, total, rank)
-	cursor.execute(entry, data)
+
+	check = ("SELECT name FROM pmt WHERE rollno='%s'")
+	data = (rollno)
+	cursor.execute(check, data)
+	if not found():
+		print("SUCCESS")
+		entry = ("INSERT INTO pmt "
+	               "(rollno, name, father, dob, total_percentile, rank)"
+	               "VALUES (%s, %s, %s, %s, %s, %s)");
+		data = (rollno, name, father, dob, total, rank)
+		cursor.execute(entry, data)
 	cnx.commit()
 # query()	
 
@@ -27,15 +41,37 @@ def getresult(roll):
 	r = requests.post(url, headers=headers, data=payload)
 	resp = r.text
 	soup = BeautifulSoup(resp, 'html.parser')
-	print(soup.prettify())
-
+	# print(soup.prettify())
+	name = "NO ONE"
+	father="EDDARD STARK"
+	DOB="1000 BC"
+	rank="999999999"
+	percent = "0"
 	if soup.font.text != ' Invalid Roll No.':
-		print("YOHOOO " + roll)
-		filter1 = soup.find_all('font')
-		for i in range(len(filter1)):
-			x = filter1[i].string
-			print("$"+str(x)+"$")
-		# webbrowser.open('result.html')
+		# print("YOHOOO " + roll)
+		info = [ str(part.string) for part in soup.find_all('font') ]
+		
+		for i in range(len(info)):
+			x = info[i]
+			# print("$"+str(x)+"$")
+
+			if x == "Name":
+				name = info[i+1].strip()
+				print(name)
+			elif x == "Father's Name":
+				father = info[i+1].strip()
+				print(father)
+			elif x == "DOB":
+				DOB = info[i+1].strip()
+				print(DOB)
+			elif x == "Open Merit No.":
+				rank = info[i+1].strip()
+				print(rank)
+			elif x == "Total Percentile ":
+				percent = info[i+1].strip()
+				print(percent)
+				break
+		query(roll, name, father, DOB, percent, rank)
 	else:
 		print("Failed: "+roll)
 	# print(soup.font1e0xt == )
