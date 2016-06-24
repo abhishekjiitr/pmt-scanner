@@ -2,34 +2,27 @@ import requests, webbrowser
 from bs4 import BeautifulSoup
 import mysql.connector
 cnx = mysql.connector.connect(user='root', password='abhi2254015', host='127.0.0.1', database='results')
-cursor = cnx.cursor()
+cursor = cnx.cursor(buffered=True)
 
-print(cursor)
-# url = 'www.google.com'
-def found():
-	global cursor
-	count = 0
-	for (name) in  cursor:
-		count += 1
-		break
-	if count > 0:
-		return True
-	return False
+
 def query(rollno="123456", name="Default", father="Default Father", dob="DOB", total="0", rank="999999"):
 	global cursor
 	global cnx
-
 	check = ("SELECT name FROM pmt WHERE rollno='%s'")
 	data = (rollno)
 	cursor.execute(check, data)
-	if not found():
-		print("SUCCESS")
+	try:
 		entry = ("INSERT INTO pmt "
 	               "(rollno, name, father, dob, total_percentile, rank)"
 	               "VALUES (%s, %s, %s, %s, %s, %s)");
 		data = (rollno, name, father, dob, total, rank)
 		cursor.execute(entry, data)
-	cnx.commit()
+		cnx.commit()
+		print("%s (%s) is being added to database. :)" % (name, rollno))
+	except Exception as e:
+		# print(str(e))
+		print("%s (%s) already added to database. :)" % (name, rollno))
+	
 # query()	
 
 def getresult(roll):
@@ -57,24 +50,24 @@ def getresult(roll):
 
 			if x == "Name":
 				name = info[i+1].strip()
-				print(name)
+				# print(name)
 			elif x == "Father's Name":
 				father = info[i+1].strip()
-				print(father)
+				# print(father)
 			elif x == "DOB":
 				DOB = info[i+1].strip()
-				print(DOB)
+				# print(DOB)
 			elif x == "Open Merit No.":
 				rank = info[i+1].strip()
-				print(rank)
+				# print(rank)
 			elif x == "Total Percentile ":
 				percent = info[i+1].strip()
-				print(percent)
+				# print(percent)
 				break
 		query(roll, name, father, DOB, percent, rank)
 	else:
-		print("Failed: "+roll)
+		print("Failed to add: "+roll + " :(")
 	# print(soup.font1e0xt == )
 # for i in range(900000, 920000):
-		# getresult(str(i+j))
+# 		getresult(str(i+j))
 getresult('900001')
