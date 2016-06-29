@@ -1,7 +1,7 @@
 import requests, webbrowser
 from bs4 import BeautifulSoup
 import mysql.connector
-cnx = mysql.connector.connect(user='root', password='abhi2254015', host='127.0.0.1', database='results')
+cnx = mysql.connector.connect(user='youruser', password='yourpassword', host='127.0.0.1', database='results')
 cursor = cnx.cursor(buffered=True)
 
 
