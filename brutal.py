@@ -4,6 +4,7 @@ import mysql.connector
 cnx = mysql.connector.connect(user='youruser', password='yourpassword', host='127.0.0.1', database='results')
 cursor = cnx.cursor(buffered=True)
 
+db_save = False # Make true if you want to save in database also
 
 def query(rollno="123456", name="Default", father="Default Father", dob="DOB", total="0", rank="999999"):
 	global cursor
@@ -16,7 +17,9 @@ def query(rollno="123456", name="Default", father="Default Father", dob="DOB", t
 	               "(rollno, name, father, dob, total_percentile, rank)"
 	               "VALUES (%s, %s, %s, %s, %s, %s)");
 		data = (rollno, name, father, dob, total, rank)
-		cursor.execute(entry, data)
+		print(data)
+		if db_save:
+			cursor.execute(entry, data)
 		cnx.commit()
 		print("%s (%s) is being added to database. :)" % (name, rollno))
 	except Exception as e:
