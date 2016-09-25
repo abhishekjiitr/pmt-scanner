@@ -73,4 +73,4 @@ def getresult(roll):
 	# print(soup.font1e0xt == )
 for i in range(900000, 920000):
 		getresult(str(i+j))
-getresult('900001')
+
